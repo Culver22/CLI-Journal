@@ -24,4 +24,11 @@ public class JournalManager {
         data.add(entry);
         return entry;
     }
+
+    public List<JournalEntry> listJournalEntries() {
+        List<JournalEntry> sortedJournalEntries = new ArrayList<>(data);
+        // Compares each Journal entry into descending order (latest first)
+        sortedJournalEntries.sort((a, b) -> b.timestamp().compareTo(a.timestamp()));
+        return sortedJournalEntries;
+    }
 }
