@@ -4,7 +4,7 @@ import java.util.*;
 
 public class JournalManager {
     private final List<JournalEntry> data = new ArrayList<>();
-    private int nextId = 0;
+    private int nextId = 1;
 
     public JournalEntry addJournalEntry(String title, String content) {
         if (title == null || title.isBlank()) {
@@ -40,10 +40,14 @@ public class JournalManager {
         List<JournalEntry> sortedJournalEntries = new ArrayList<>(data);
         // Compares each Journal entry into descending order (latest first)
         sortedJournalEntries.sort((a, b) -> b.timestamp().compareTo(a.timestamp()));
-        return sortedJournalEntries;
+        return Collections.unmodifiableList(sortedJournalEntries);
     }
 
     public List<JournalEntry> searchByKeyword(String keyword) {
+        if (keyword == null || keyword.isBlank()) {
+            throw new IllegalArgumentException("Keyword cannot be null or empty");
+        }
+
         List<JournalEntry> filteredJournalEntries = new ArrayList<>();
         String lowerCaseKeyword = keyword.toLowerCase();
         for (JournalEntry entry : data) { // Loop through all entries
@@ -53,6 +57,7 @@ public class JournalManager {
                 filteredJournalEntries.add(entry);
             }
         }
+        filteredJournalEntries.sort((a, b) -> b.timestamp().compareTo(a.timestamp()));
         return filteredJournalEntries;
     }
 
@@ -66,13 +71,13 @@ public class JournalManager {
         return filteredJournalEntries;
     }
 
-    public JournalEntry searchById(int id) {
+    public Optional<JournalEntry> searchById(int id) {
         // no need for a list as IDs are unique to each entry. Hence, one result
         for (JournalEntry entry : data) {
             if (entry.id() == id) {
-                return entry;
+                return Optional.of(entry);
             }
         }
-        return null;
+        return Optional.empty();
     }
 }
