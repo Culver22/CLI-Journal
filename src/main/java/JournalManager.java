@@ -54,4 +54,14 @@ public class JournalManager {
         }
         return filteredJournalEntries;
     }
+
+    public List<JournalEntry> searchByDate(String date) {
+        List<JournalEntry> filteredJournalEntries = new ArrayList<>();
+        for (JournalEntry entry : data) {
+            if (entry.timestamp().toLocalDate().equals(date)) { // Compare date given to timestamps
+                filteredJournalEntries.add(entry);
+            }
+        }
+        return filteredJournalEntries;
+    }
 }
