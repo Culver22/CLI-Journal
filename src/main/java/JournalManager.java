@@ -25,6 +25,17 @@ public class JournalManager {
         return entry;
     }
 
+    public boolean deleteJournalEntry(int id) {
+        for (int i = 0; i < data.size(); i++) {
+            if (data.get(i).id() == id) {
+                data.remove(i);  // safe to remove by index
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     public List<JournalEntry> listJournalEntries() {
         List<JournalEntry> sortedJournalEntries = new ArrayList<>(data);
         // Compares each Journal entry into descending order (latest first)
