@@ -1,3 +1,4 @@
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -55,7 +56,7 @@ public class JournalManager {
         return filteredJournalEntries;
     }
 
-    public List<JournalEntry> searchByDate(String date) {
+    public List<JournalEntry> searchByDate(LocalDate date) {
         List<JournalEntry> filteredJournalEntries = new ArrayList<>();
         for (JournalEntry entry : data) {
             if (entry.timestamp().toLocalDate().equals(date)) { // Compare date given to timestamps
@@ -63,5 +64,15 @@ public class JournalManager {
             }
         }
         return filteredJournalEntries;
+    }
+
+    public JournalEntry searchById(int id) {
+        // no need for a list as IDs are unique to each entry. Hence, one result
+        for (JournalEntry entry : data) {
+            if (entry.id() == id) {
+                return entry;
+            }
+        }
+        return null;
     }
 }
