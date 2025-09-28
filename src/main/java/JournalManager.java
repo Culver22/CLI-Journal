@@ -35,11 +35,23 @@ public class JournalManager {
         return false;
     }
 
-
     public List<JournalEntry> listJournalEntries() {
         List<JournalEntry> sortedJournalEntries = new ArrayList<>(data);
         // Compares each Journal entry into descending order (latest first)
         sortedJournalEntries.sort((a, b) -> b.timestamp().compareTo(a.timestamp()));
         return sortedJournalEntries;
+    }
+
+    public List<JournalEntry> searchByKeyword(String keyword) {
+        List<JournalEntry> filteredJournalEntries = new ArrayList<>();
+        String lowerCaseKeyword = keyword.toLowerCase();
+        for (JournalEntry entry : data) { // Loop through all entries
+            if (entry.title().toLowerCase().contains(lowerCaseKeyword)
+                    || entry.content().toLowerCase().contains(lowerCaseKeyword)) {
+                // if either title or content contains keyword add to the filtered list
+                filteredJournalEntries.add(entry);
+            }
+        }
+        return filteredJournalEntries;
     }
 }
