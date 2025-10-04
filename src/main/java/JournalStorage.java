@@ -33,20 +33,48 @@ public class JournalStorage {
                 if (line.startsWith(EntrySeparator)) { // end of block
                     parseBlock(blockLines, journalEntries);  // ToDo add parseBlock method
                     blockLines.clear(); // reset for next block
-                }
-                else {
+                } else {
                     blockLines.add(line); // collect lines
-            }
+                }
 
-        }
-            if (!blockLines.isEmpty()) { // at the end of the file - no separator
-                parseBlock(blockLines,journalEntries);
             }
-    }
-        catch (IOException e) {
+            if (!blockLines.isEmpty()) { // at the end of the file - no separator
+                parseBlock(blockLines, journalEntries);
+            }
+        } catch (IOException e) {
             System.out.println("Error reading file: " + e.getMessage());
         }
         return journalEntries;
 
 
+    }
+
+    private void parseBlock(List<String> blockLines, List<JournalEntry> journalEntries) {
+        if (blockLines.isEmpty()) return;
+
+        try {
+            String[] parts = blockLines.getFirst().split("\\|", 3);  // Split at every '|' into 3 parts
+            if (parts.length < 3) return; // Incomplete block - skip
+
+            int id = Integer.parseInt(parts[0].trim());
+            // First part is the ID which is parsed as an integer
+
+            LocalDateTime time = LocalDateTime.parse(parts[1].trim(), formatter);
+            // Second is time, which is parsed as date and time
+
+            String title = parts[2].trim();
+            // Thirdly the title which is parsed as a string
+
+            StringBuilder content = new StringBuilder();
+            // Start building the content of the entry, by concatenating each line after the header
+            for (int i = 1; i < blockLines.size(); i++) {
+                content.append(blockLines.get(i)).append(System.lineSeparator());
+            }
+
+            journalEntries.add(new JournalEntry(id, title, content.toString().trim(), time));
+
+        } catch (Exception e) {
+            System.out.println("Skipping malformed entry block: " + e.getMessage());
+        }
+    }
 }
