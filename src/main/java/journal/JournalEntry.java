@@ -1,3 +1,4 @@
+package journal;
 import java.time.LocalDateTime;
 
 public record JournalEntry(

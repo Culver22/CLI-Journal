@@ -1,9 +1,10 @@
+package journal;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,6 +76,29 @@ public class JournalStorage {
 
         } catch (Exception e) {
             System.out.println("Skipping malformed entry block: " + e.getMessage());
+        }
+    }
+
+    public void append(JournalEntry journalEntry) {
+        String block = journalEntry.id() + "|"
+                + journalEntry.timestamp().format(formatter) + "|"
+                + journalEntry.title() + System.lineSeparator()
+                + journalEntry.content() + System.lineSeparator()
+                + EntrySeparator + System.lineSeparator();
+
+        try {
+            // Create the file if it doesn't already exist
+            if (!Files.exists(file)) {
+                Files.createFile(file);
+            }
+
+            // Append the entry text to the end of the file
+            Files.writeString(
+                    file, block, StandardCharsets.UTF_8, StandardOpenOption.APPEND
+            );
+
+        } catch (IOException e) {
+            System.out.println("Error writing entry to file: " + e.getMessage());
         }
     }
 }
