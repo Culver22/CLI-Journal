@@ -53,9 +53,27 @@ public class Main {
                     System.out.println("Could not add entry: " + ex.getMessage());
                 }
             }
-            case "remove" -> { //Todo remove entry from file
-                System.out.println("Removing a new journal entry");
+
+            case "remove" -> {
+                // if the user typed 'remove' without the ID
+                if (args.length < 2) {
+                    System.out.println("Usage: remove <id>");
+                    return;
+                }
+                try {
+                    int id = Integer.parseInt(args[1]);
+                    if (manager.deleteJournalEntry(id)) {
+                        System.out.println("Journal entry with ID: " + args[1] + " has been removed.");
+                    } else{
+                        System.out.println("Could not find entry with ID: " + args[1]);
+                    }
+                } catch (NumberFormatException ex) {
+                    System.out.println("ID must be an integer.");
+                } catch (IllegalStateException ex) {
+                    System.out.println("Delete failed: " + ex.getMessage());
+                }
             }
+
             case "list" -> { //Todo read from file and print all entries
                 System.out.println("Listing all journal entries");
             }
