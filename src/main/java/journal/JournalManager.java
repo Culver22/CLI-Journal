@@ -43,9 +43,14 @@ public class JournalManager {
     public boolean deleteJournalEntry(int id) {
         for (int i = 0; i < data.size(); i++) {
             if (data.get(i).id() == id) {
-                data.remove(i);  // safe to remove by index
-                storage.deleteById(id);
-                return true;
+                // remove from memory *after* storage confirms
+                boolean removedFromFile = storage.deleteById(id);
+                if (removedFromFile) {
+                    data.remove(i);
+                    return true;
+                } else {
+                    throw new IllegalStateException("Failed to delete entry " + id + " from storage, keeping in memory");
+                }
             }
         }
         return false;
@@ -55,7 +60,7 @@ public class JournalManager {
         List<JournalEntry> sortedJournalEntries = new ArrayList<>(data);
         // Compares each Journal entry into descending order (latest first)
         sortedJournalEntries.sort((a, b) -> b.timestamp().compareTo(a.timestamp()));
-        return Collections.unmodifiableList(sortedJournalEntries);
+        return sortedJournalEntries;
     }
 
     public List<JournalEntry> searchByKeyword(String keyword) {
