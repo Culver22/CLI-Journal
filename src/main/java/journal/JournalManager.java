@@ -6,7 +6,22 @@ import java.util.*;
 
 public class JournalManager {
     private final List<JournalEntry> data = new ArrayList<>();
+    private final JournalStorage storage;
     private int nextId = 1;
+
+    public JournalManager(JournalStorage storage) {
+        this.storage = storage;  // Load existing entries for file
+
+        List<JournalEntry> fromFile = storage.loadAll();
+        data.addAll(fromFile);
+
+        if (!data.isEmpty()) {
+            nextId = data.stream()
+                    .mapToInt(JournalEntry::id) // For every Journal entry ID
+                    .max() // Find the highest ID
+                    .getAsInt() + 1; // set next ID to the highest ID + 1
+        }
+    }
 
     public JournalEntry addJournalEntry(String title, String content) {
         if (title == null || title.isBlank()) {
