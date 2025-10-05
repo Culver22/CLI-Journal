@@ -18,8 +18,40 @@ public class Main {
         }
 
         switch (args[0]) {
-            case "add" -> { //Todo add prompt for title + entry
-                System.out.println("Adding a new journal entry");
+            case "add" -> {
+                Scanner sc = new Scanner(System.in);
+
+                System.out.print("Title: ");
+                String title = sc.nextLine();
+
+                System.out.println("Content (Press ENTER TWICE to Finish):");
+                StringBuilder content = new StringBuilder();
+                int emptyCount = 0;
+
+                while (true) {
+                    String line = sc.nextLine();
+                    if (line.isBlank()) {
+                        emptyCount++;
+                        if (emptyCount == 2) {
+                            break; // stop after two consecutive blank lines
+                        }
+                    } else {
+                        emptyCount = 0; // reset if user typed something
+                        content.append(line).append(System.lineSeparator());
+                    }
+                }
+
+                if (content.isEmpty()) { // Prevent saving empty entries
+                    System.out.println("No content entered. Entry discarded.");
+                    return;
+                }
+
+                try {
+                    JournalEntry saved = manager.addJournalEntry(title, content.toString().trim());
+                    System.out.println("Saved entry with ID: " + saved.id());
+                } catch (IllegalArgumentException ex) {
+                    System.out.println("Could not add entry: " + ex.getMessage());
+                }
             }
             case "remove" -> { //Todo remove entry from file
                 System.out.println("Removing a new journal entry");
