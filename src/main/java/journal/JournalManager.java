@@ -19,7 +19,7 @@ public class JournalManager {
             nextId = data.stream()
                     .mapToInt(JournalEntry::id) // For every Journal entry ID
                     .max() // Find the highest ID
-                    .getAsInt() + 1; // set next ID to the highest ID + 1
+                    .orElse(0) + 1;
         }
     }
 
@@ -68,36 +68,24 @@ public class JournalManager {
             throw new IllegalArgumentException("Keyword cannot be null or empty");
         }
 
-        List<JournalEntry> filteredJournalEntries = new ArrayList<>();
-        String lowerCaseKeyword = keyword.toLowerCase();
-        for (JournalEntry entry : data) { // Loop through all entries
-            if (entry.title().toLowerCase().contains(lowerCaseKeyword)
-                    || entry.content().toLowerCase().contains(lowerCaseKeyword)) {
-                // if either title or content contains keyword add to the filtered list
-                filteredJournalEntries.add(entry);
-            }
-        }
-        filteredJournalEntries.sort((a, b) -> b.timestamp().compareTo(a.timestamp()));
-        return filteredJournalEntries;
+        return data.stream()
+                .filter(e -> e.title().toLowerCase().contains(keyword.toLowerCase())
+                        || e.content().toLowerCase().contains(keyword.toLowerCase()))
+                .sorted((a, b) -> b.timestamp().compareTo(a.timestamp()))
+                .toList();
     }
 
     public List<JournalEntry> searchByDate(LocalDate date) {
-        List<JournalEntry> filteredJournalEntries = new ArrayList<>();
-        for (JournalEntry entry : data) {
-            if (entry.timestamp().toLocalDate().equals(date)) { // Compare date given to timestamps
-                filteredJournalEntries.add(entry);
-            }
-        }
-        return filteredJournalEntries;
+        return data.stream()
+                .filter(e -> e.timestamp().toLocalDate().equals(date)) // Compare date given to timestamps
+                .sorted((a, b) -> b.timestamp().compareTo(a.timestamp()))
+                .toList();
     }
 
     public Optional<JournalEntry> searchById(int id) {
         // no need for a list as IDs are unique to each entry. Hence, one result
-        for (JournalEntry entry : data) {
-            if (entry.id() == id) {
-                return Optional.of(entry);
-            }
-        }
-        return Optional.empty();
+        return data.stream()
+                .filter(e -> e.id() == id)
+                .findFirst();
     }
 }
