@@ -33,13 +33,10 @@ public class JournalManager {
             throw new IllegalArgumentException("Content cannot be null or empty");
         }
 
-        JournalEntry entry = new JournalEntry(
-                nextId ++, // increase the ID value
-                title,
-                content,
-                LocalDateTime.now()
-        );
+        JournalEntry entry = new JournalEntry( nextId++, title, content, LocalDateTime.now());
+
         data.add(entry);
+        storage.append(entry);
         return entry;
     }
 
@@ -47,6 +44,7 @@ public class JournalManager {
         for (int i = 0; i < data.size(); i++) {
             if (data.get(i).id() == id) {
                 data.remove(i);  // safe to remove by index
+                storage.deleteById(id);
                 return true;
             }
         }
