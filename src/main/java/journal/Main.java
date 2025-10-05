@@ -1,5 +1,17 @@
+package journal;
+
+import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.util.List;
+import java.util.Optional;
+import java.util.Scanner;
+
 public class Main {
     public static void main(String[] args) {
+        JournalStorage storage = new JournalStorage(Path.of("journal.txt"));
+        JournalManager manager = new JournalManager(storage);
+
         if (args.length == 0) { // No Argument, print the help string of acceptable args
             printHelp();
             return;
