@@ -74,8 +74,16 @@ public class Main {
                 }
             }
 
-            case "list" -> { //Todo read from file and print all entries
-                System.out.println("Listing all journal entries");
+            case "list" -> {
+                List<JournalEntry> entries = manager.listJournalEntries();
+                if (entries.isEmpty()) {
+                    System.out.println("No entries yet.");
+                } else {
+                    System.out.println("Journal Entries:");
+                    for (JournalEntry entry : entries) {
+                        printFullEntry(entry);
+                    }
+                }
             }
             case "searchKey" -> { // Todo Show entries using a keyword
                 System.out.println("Searching for journal entry by keyword");
@@ -88,6 +96,16 @@ public class Main {
             }
             default -> printHelp();
         }
+    }
+
+    private static void printFullEntry(JournalEntry entry) {
+        System.out.println("-----------------------------------------");
+        System.out.println("ID: " + entry.id());
+        System.out.println("Date: " + entry.timestamp());
+        System.out.println("Title: " + entry.title());
+        System.out.println();
+        System.out.println(entry.content());
+        System.out.println("-----------------------------------------");
     }
 
     private static void printHelp() {
