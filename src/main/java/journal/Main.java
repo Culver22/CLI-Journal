@@ -108,9 +108,29 @@ public class Main {
                 }
             }
 
-            case "searchDate" -> { //Todo Show entries using a Date
-                System.out.println("Searching for journal entry by date");
+            case "searchDate" -> {
+                if (args.length < 2) {
+                    System.out.println("Usage: searchDate <YYYY-MM-DD>");
+                    return;
+                }
+
+                try {
+                    LocalDate date = LocalDate.parse(args[1]);
+                    List<JournalEntry> results = manager.searchByDate(date);
+
+                    if (results.isEmpty()) {
+                        System.out.println("No entries found on " + date);
+                    } else {
+                        System.out.println("Journal Entries from: " + date);
+                        for (JournalEntry e : results) {
+                            printFullEntry(e);
+                        }
+                    }
+                } catch (DateTimeParseException ex) {
+                    System.out.println("Invalid date format. Use YYYY-MM-DD.");
+                }
             }
+
             case "searchID" -> { // Todo Show entries using an ID
                 System.out.println("Searching for journal entry by ID");
             }
