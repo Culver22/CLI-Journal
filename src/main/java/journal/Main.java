@@ -85,9 +85,29 @@ public class Main {
                     }
                 }
             }
-            case "searchKey" -> { // Todo Show entries using a keyword
-                System.out.println("Searching for journal entry by keyword");
+            case "searchKey" -> {
+                if (args.length < 2) {
+                    System.out.println("Usage: searchKey <keyword>");
+                    return;
+                }
+
+                String keyword = args[1];
+
+                try {
+                    List<JournalEntry> results = manager.searchByKeyword(keyword);
+                    if (results.isEmpty()) {
+                        System.out.println("No matches for: " + keyword);
+                    } else {
+                        System.out.println("Journal Entries containing: " + keyword);
+                        for (JournalEntry e : results) {
+                            printFullEntry(e);
+                        }
+                    }
+                } catch (IllegalArgumentException ex) {
+                    System.out.println("Search error: " + ex.getMessage());
+                }
             }
+
             case "searchDate" -> { //Todo Show entries using a Date
                 System.out.println("Searching for journal entry by date");
             }
