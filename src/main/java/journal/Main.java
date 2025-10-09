@@ -131,9 +131,27 @@ public class Main {
                 }
             }
 
-            case "searchID" -> { // Todo Show entries using an ID
-                System.out.println("Searching for journal entry by ID");
+            case "searchID" -> {
+                if (args.length < 2) {
+                    System.out.println("Usage: searchID <id>");
+                    return;
+                }
+
+                try {
+                    int id = Integer.parseInt(args[1]);
+                    Optional<JournalEntry> found = manager.searchById(id);
+
+                    if (found.isPresent()) {
+                        System.out.println("Journal Entry with ID " + id + ":");
+                        printFullEntry(found.get());
+                    } else {
+                        System.out.println("No entry found with ID " + id);
+                    }
+                } catch (NumberFormatException ex) {
+                    System.out.println("ID must be an integer.");
+                }
             }
+
             default -> printHelp();
         }
     }
