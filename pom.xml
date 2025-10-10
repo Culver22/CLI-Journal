@@ -10,6 +10,6 @@
 
     <properties>
         <!-- Pick the Java version you want to compile with -->
-        <maven.compiler.release>23</maven.compiler.release>
+        <maven.compiler.release>21</maven.compiler.release>
     </properties>
 </project>
